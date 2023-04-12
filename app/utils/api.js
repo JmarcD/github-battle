@@ -1,3 +1,7 @@
+const id = "YOUR_CLIENT_ID";
+const sec = "YOUR_SECRET_ID";
+const params = `?client_id=${id}&client_secret=${sec}`;
+
 export function fetchPopularRepos(language) {
   const endpoint = window.encodeURI(
     `https://api.github.com/search/repositories?q=stars:>1+language:${language}&sort=stars&order=desc&type=Repositories`
@@ -14,34 +18,34 @@ export function fetchPopularRepos(language) {
     });
 }
 
+function getErrorMsg(message, username) {
+  if (message === "Not Found") {
+    return `${username} doesn't exist`;
+  }
+
+  return message;
+}
+
 function getProfile(username) {
-  return fetch(`https://api.github.com/users/${username}`)
+  return fetch(`https://api.github.com/users/${username}${params}`)
     .then((res) => res.json())
     .then((profile) => {
       if (profile.message) {
-        // error
-        throw new Error(getErrorMsg(profile.mesage, username));
+        throw new Error(getErrorMsg(profile.message, username));
       }
 
       return profile;
     });
 }
 
-function getErrorMsg(message, username) {
-  if (mesage === "Not Found") {
-    return `${username} doesn't exists`;
-  }
-
-  return message;
-}
-
 function getRepos(username) {
-  return fetch(`https://api.github.com/users/${username}/repos?per_page=100`)
+  return fetch(
+    `https://api.github.com/users/${username}/repos${params}&per_page=100`
+  )
     .then((res) => res.json())
     .then((repos) => {
       if (repos.message) {
-        // error
-        throw new Error(getErrorMsg(repos.mesage, username));
+        throw new Error(getErrorMsg(repos.message, username));
       }
 
       return repos;
@@ -49,13 +53,13 @@ function getRepos(username) {
 }
 
 function getStarCount(repos) {
-  return repos.reduce((count, stargazers_count) => {
+  return repos.reduce((count, { stargazers_count }) => {
     return count + stargazers_count;
   }, 0);
 }
 
-function calculateScore(followers, score) {
-  return followers * 3 + getStarCount(score);
+function calculateScore(followers, repos) {
+  return followers * 3 + getStarCount(repos);
 }
 
 function getUserData(player) {
