@@ -9,8 +9,8 @@ class App extends React.Component {
     return (
       <div className="light">
         <div className="container">
-          {/* <Popular /> */}
-          <Battle />
+          <Popular />
+          {/* <Battle /> */}
         </div>
       </div>
     );
