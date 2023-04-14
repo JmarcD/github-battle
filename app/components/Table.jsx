@@ -103,7 +103,9 @@ function TableRow({
               src={avatar_url}
               alt={`Avatar for ${login}`}
             />
-            <a href={`https://github.com/${login}/${name}`}>{name}</a>
+            <a href={`https://github.com/${login}/${name}`} target="_blank">
+              {name}
+            </a>
           </div>
         </Tooltip>
       </td>
